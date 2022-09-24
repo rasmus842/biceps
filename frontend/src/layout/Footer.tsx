@@ -1,0 +1,15 @@
+import React from 'react';
+
+export const Footer = () => {
+  return (
+    <footer className="mt-auto flex items-center gap-9 p-3 whitespace-nowrap">
+      <div className="mr-auto">&#169; Big Biceps Inc., 2022</div>
+      <div className="">
+        Web design by Rasmus Zalite at
+        <a href="https://github.com/rasmus842/css-project">
+          github.com/rasmus842
+        </a>
+      </div>
+    </footer>
+  );
+};

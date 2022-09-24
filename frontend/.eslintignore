@@ -3,3 +3,5 @@ public/
 .prettierrc
 .eslintrc.json
 vite-env.d.ts
+postcss.config.cjs
+tailwind.config.cjs
