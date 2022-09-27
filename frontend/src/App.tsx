@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Layout } from './layout/Layout';
 import { BlogPage } from './pages/BlogPage';
-import { HomePage } from './pages/HomePage';
+import { HomePage } from './pages/home/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ShopPage } from './pages/ShopPage';
 

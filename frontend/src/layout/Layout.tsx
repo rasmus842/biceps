@@ -7,7 +7,9 @@ export const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <Outlet />
+      <div className="mt-16">
+        <Outlet />
+      </div>
       <Footer />
     </div>
   );

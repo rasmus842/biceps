@@ -1,0 +1,40 @@
+.service {
+  height: 500px;
+  width: auto;
+  min-width: 200px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 36px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.account {
+  composes: service;
+  background: linear-gradient(0deg, #1181b2b3, #1181b2b3),
+    url('./../../assets/images/start-from-bottom.jpg');
+  color: #ddedf4;
+}
+
+.shop {
+  composes: service;
+  background: linear-gradient(0deg, #ddedf4b3, #ddedf4b3),
+    url('./../../assets/images/shop.jpg');
+  color: #212221;
+}
+
+.app {
+  composes: service;
+  background: linear-gradient(0deg, #44449bb3, #44449bb3),
+    url('./../../assets/images/dumbbell-curl.jpeg');
+  color: #ddedf4;
+}
+
+.header {
+  font-size: 36px;
+  font-weight: 900;
+}
