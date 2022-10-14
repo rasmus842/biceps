@@ -1,0 +1,15 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+copy {
+    from './frontend/public'
+    into './apache-tomcat-10.0.23-src'
+    include 'assets/*'
+    include 'index.html'
+}
+

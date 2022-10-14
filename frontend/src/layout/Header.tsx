@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/biceps-logo.png';
 
 export const Header = () => {
