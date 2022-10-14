@@ -1,3 +1,4 @@
 rootProject.name = 'biceps'
 
-include('app')
+include 'api'
+

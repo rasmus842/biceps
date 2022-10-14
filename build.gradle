@@ -6,10 +6,13 @@ dependencies {
 
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 copy {
     from './frontend/public'
-    into './apache-tomcat-10.0.23-src'
+    into './apache/webapps/ROOT'
     include 'assets/*'
     include 'index.html'
 }
-
