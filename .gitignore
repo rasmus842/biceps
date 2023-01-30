@@ -1,3 +1,6 @@
+# ignore potentially sensitive information?
+api.properties
+
 # Ignore Gradle project-specific cache directory
 .gradle
 
@@ -31,3 +34,10 @@ public-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# openapi-generator generated file from api_spec.yaml
+api/generated/
+
+# first demo project to learn servlets
+firstapi/
+/firstapi/

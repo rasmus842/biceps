@@ -1,0 +1,32 @@
+plugins {
+    id 'war'
+    id "io.freefair.lombok" version "$lombokVersion"
+}
+
+group 'ee.biceps.api'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.postgresql:postgresql:' + pgJdbcVersion
+    implementation 'org.jdbi:jdbi3-core:' + jdbiVersion
+    implementation 'org.jdbi:jdbi3-sqlobject:' + jdbiVersion
+
+    implementation 'jakarta.servlet:jakarta.servlet-api:' + servletVersion
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:' + junitVersion
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:' + junitVersion
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}

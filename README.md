@@ -13,7 +13,12 @@ Also Java as backend
 - postgres as relational database
 
 TODO:
-- frontend components (landing page, sing-up form, login, authentication, shop, blog-page)
-- serving frontend view with tomcat and java servlets
-- build scripts with bash and gradle
-- database access with postgres, jdbc, and jdbi
+- gradle scripts for:
+  - copy db/create_schema.sql and drop_schema.sql to api/test/resources
+  - dropSchema and createSchema scripts
+  - update script
+- creating a servlet front
+  - with openapi specs (see how to generate spring server and typescript client)
+  - after that - Spring (both DI, web, and testing)
+  
+After that focus more on frontend (react + ts)

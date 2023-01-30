@@ -2,17 +2,32 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-
+ext {
+    pgJdbcVersion = '42.5.0'
+    jdbiVersion = '3.34.0'
+    servletVersion = '5.0.0'
+    junitVersion = '5.9.0'
+    lombokVersion = '6.5.1'
+    springVersion = '6.0.2'
+    jacksonVersion = '2.14.1'
+    openapiGeneratorVersion = '6.2.1'
 }
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
-copy {
+// a task before this to build the react app
+tasks.register('copyReactUI', Copy) {
     from './frontend/public'
     into './apache/webapps/ROOT'
     include 'assets/*'
     include 'index.html'
+}
+
+tasks.register('copyWar', Copy) {
+    dependsOn ':api:build'
+    from './api/build/libs'
+    into './apache/webapps'
+    include '*.war'
 }

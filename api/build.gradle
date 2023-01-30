@@ -1,5 +1,9 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
 plugins {
     id 'war'
+    id "io.freefair.lombok" version "$lombokVersion"
+    id "org.openapi.generator" version "$openapiGeneratorVersion"
 }
 
 group 'ee.biceps.api'
@@ -8,7 +12,69 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+ext {
+    basePackage = 'ee.biceps.api'
+    generatedPackage = 'ee.biceps.api.generated'
 }
 
+dependencies {
+    implementation "jakarta.servlet:jakarta.servlet-api:$servletVersion"
+    implementation "org.springframework:spring-webmvc:$springVersion"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+
+    implementation "org.postgresql:postgresql:$pgJdbcVersion"
+    implementation "org.jdbi:jdbi3-core:$jdbiVersion"
+    implementation "org.jdbi:jdbi3-sqlobject:$jdbiVersion"
+
+    testImplementation "org.springframework:spring-test:$springVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+war {
+    setArchivesBaseName 'api'
+}
+
+clean.doFirst {
+    delete "$projectDir/generated"
+}
+
+tasks.register('generateServer', GenerateTask) {
+    doFirst {
+        delete "$projectDir/generated"
+    }
+    generatorName = 'spring'
+    inputSpec = "$projectDir/api_spec.yaml".toString()
+    outputDir = "$projectDir/generated".toString()
+    invokerPackage = "${generatedPackage}.invoker"
+    packageName = "$generatedPackage"
+    apiPackage = "${generatedPackage}.api"
+    modelPackage = "${generatedPackage}.model"
+    configOptions = [
+            configPackage: "${generatedPackage}.config",
+            dateLibrary: "java8",
+            annotationlibrary: "none",
+            delegatePattern: "true",
+            interfaceOnly: "true"
+    ]
+}
+
+tasks.register('copyOpenApi', Copy) {
+    doFirst {
+        delete "$projectDir/src/main/java/ee/biceps/api/generated"
+    }
+    dependsOn 'generateServer'
+    from "$projectDir/generated"
+    into "$projectDir"
+    include "**/*.java"
+    exclude ".openapi-generator"
+}
