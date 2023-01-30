@@ -18,6 +18,8 @@ ext {
 }
 
 dependencies {
+    implementation "io.swagger.core.v3:swagger-annotations:$swaggerAnnotationsVersion"
+
     implementation "jakarta.servlet:jakarta.servlet-api:$servletVersion"
     implementation "org.springframework:spring-webmvc:$springVersion"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"

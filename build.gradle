@@ -11,6 +11,7 @@ ext {
     springVersion = '6.0.2'
     jacksonVersion = '2.14.1'
     openapiGeneratorVersion = '6.2.1'
+    swaggerAnnotationsVersion = '2.2.8'
 }
 
 configurations.all {
