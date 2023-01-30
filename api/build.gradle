@@ -63,8 +63,11 @@ tasks.register('generateServer', GenerateTask) {
             configPackage: "${generatedPackage}.config",
             dateLibrary: "java8",
             annotationlibrary: "none",
+            documentationProvider: "springdoc",
+            fullJavaUtil: "true",
             delegatePattern: "true",
-            interfaceOnly: "true"
+            interfaceOnly: "false",
+            requestMappingMode: "controller"
     ]
 }
 
