@@ -3,7 +3,8 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     id 'war'
     id "io.freefair.lombok" version "$lombokVersion"
-    id "org.openapi.generator" version "$openapiGeneratorVersion"
+    id "org.openapi.generator" version "6.2.1" // to generate server code
+    id 'org.hidetake.swagger.generator' version '2.19.2' // to generate swagger UI
 }
 
 group 'ee.biceps.api'
@@ -12,13 +13,16 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    basePackage = 'ee.biceps.api'
-    generatedPackage = 'ee.biceps.api.generated'
-}
-
 dependencies {
-    implementation "io.swagger.core.v3:swagger-annotations:$swaggerAnnotationsVersion"
+    // to generate swagger UI
+    swaggerUI 'org.webjars:swagger-ui:3.52.5'
+
+    // dependencies for openapi-generator generated server stubs
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+    implementation "io.swagger.core.v3:swagger-annotations:2.2.8"
+    implementation 'io.swagger.core.v3:swagger-models:2.2.8'
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.4'
 
     implementation "jakarta.servlet:jakarta.servlet-api:$servletVersion"
     implementation "org.springframework:spring-webmvc:$springVersion"
@@ -42,44 +46,81 @@ test {
     }
 }
 
-war {
-    setArchivesBaseName 'api'
-}
-
-clean.doFirst {
-    delete "$projectDir/generated"
-}
-
-tasks.register('generateServer', GenerateTask) {
+/**
+ * TODO - organize gradle build - at the moment the generated swagger UI
+ * and spring server stubs are good.
+ * But how to view swagger UI?
+ * Solution:
+ * 1) decouple react UI from tomcat - into nodejs / nextjs / nginx
+ * 2) access tomcat backend via proxy? - nxinx
+ * 3) or simply serve react UI and tomcat api separately on different ports
+ * 4) tomcat api on port 8080, react UI on different port?
+ * 5) The only view that tomcat serves is the swagger-ui, the default page
+ **/
+// openapi-generator task
+tasks.register('generateOpenApiServer', GenerateTask) {
     doFirst {
-        delete "$projectDir/generated"
+        delete "$buildDir/openapi-generator"
     }
+    def generatedPackage = 'ee.biceps.generated'
+
     generatorName = 'spring'
     inputSpec = "$projectDir/api_spec.yaml".toString()
-    outputDir = "$projectDir/generated".toString()
+    outputDir = "$buildDir/openapi-generator".toString()
     invokerPackage = "${generatedPackage}.invoker"
     packageName = "$generatedPackage"
     apiPackage = "${generatedPackage}.api"
     modelPackage = "${generatedPackage}.model"
     configOptions = [
             configPackage: "${generatedPackage}.config",
-            dateLibrary: "java8",
-            annotationlibrary: "none",
-            documentationProvider: "springdoc",
-            fullJavaUtil: "true",
-            delegatePattern: "true",
-            interfaceOnly: "false",
-            requestMappingMode: "controller"
+
+            // which imports and dependencies to use (// <default>)
+            dateLibrary: "java8", // java8
+            fullJavaUtil: "true", // false
+            openApiNullable: "true", // true
+            performBeanValidation: "false", // false
+            useSpringBoot3: "true", // false - will use jakarta instead of javax
+
+            // using swaggerUI for documentation
+            annotationLibrary: "none", // swagger2
+            documentationProvider: "none", // springdoc
+
+            // Pattern of api (// <default>)
+            delegatePattern: "true", // false
+            interfaceOnly: "false", // false
+            skipDefaultInterface: "false", // false
+            requestMappingMode: "none", // controller - vs api_interface
+            unHandledException: "false", // false - useful for @ControllerAdvice
+            useSpringController: "false" // false - @Controller on Api-class
     ]
 }
 
-tasks.register('copyOpenApi', Copy) {
+tasks.register('copyOpenApiServer', Copy) {
+    dependsOn 'generateOpenApiServer'
     doFirst {
-        delete "$projectDir/src/main/java/ee/biceps/api/generated"
+        delete fileTree("$projectDir/src/generated").matching {
+            include "**/*.java"
+        }
     }
-    dependsOn 'generateServer'
-    from "$projectDir/generated"
-    into "$projectDir"
+    from "$buildDir/openapi-generator/src/main"
+    into "$projectDir/src/generated"
     include "**/*.java"
-    exclude ".openapi-generator"
+    exclude ".openapi-generator", "**/invoker", "**/config", "**/resources"
+}
+
+generateSwaggerUI {
+    inputFile = file('api_spec.yaml')
+    outputDir = file("$projectDir/src/generated/resources/swagger-ui")
+}
+
+war {
+    dependsOn 'generateSwaggerUI'
+    from("$projectDir/src/generated/resources/swagger-ui")
+    setArchivesBaseName 'api'
+}
+
+sourceSets.main.java.srcDirs += "$projectDir/src/generated/java"
+
+build {
+    dependsOn 'copyOpenApiServer'
 }

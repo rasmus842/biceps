@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 public class ProductController {
-    @GetMapping("/products")
+    @GetMapping("/defaultProducts")
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getProducts() {
         List<Product> products = new ArrayList<>();

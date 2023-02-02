@@ -13,7 +13,8 @@ import java.util.List;
 @ComponentScan(basePackages = {
         "ee.biceps.api.controller",
         "ee.biceps.api.dao",
-        "ee.biceps.api.service"})
+        "ee.biceps.api.service",
+        "ee.biceps.api.generated.api"})
 public class ServletRootConfig implements WebMvcConfigurer {
 
     @Override
