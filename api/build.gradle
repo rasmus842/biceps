@@ -3,8 +3,19 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     id 'war'
     id "io.freefair.lombok" version "$lombokVersion"
-    id "org.openapi.generator" version "6.2.1" // to generate server code
-    id 'org.hidetake.swagger.generator' version '2.19.2' // to generate swagger UI
+
+    /**
+     * To generate spring server stubs (controllers, delegates, and models)
+     * https://openapi-generator.tech/
+     * https://github.com/OpenAPITools/openapi-generator
+     */
+    id "org.openapi.generator" version "6.2.1"
+
+    /**
+     * To generate swagger UI
+     * https://github.com/int128/gradle-swagger-generator-plugin
+     */
+    id 'org.hidetake.swagger.generator' version '2.19.2'
 }
 
 group 'ee.biceps.api'
@@ -46,17 +57,6 @@ test {
     }
 }
 
-/**
- * TODO - organize gradle build - at the moment the generated swagger UI
- * and spring server stubs are good.
- * But how to view swagger UI?
- * Solution:
- * 1) decouple react UI from tomcat - into nodejs / nextjs / nginx
- * 2) access tomcat backend via proxy? - nxinx
- * 3) or simply serve react UI and tomcat api separately on different ports
- * 4) tomcat api on port 8080, react UI on different port?
- * 5) The only view that tomcat serves is the swagger-ui, the default page
- **/
 // openapi-generator task
 tasks.register('generateOpenApiServer', GenerateTask) {
     doFirst {
@@ -111,11 +111,14 @@ tasks.register('copyOpenApiServer', Copy) {
 generateSwaggerUI {
     inputFile = file('api_spec.yaml')
     outputDir = file("$projectDir/src/generated/resources/swagger-ui")
+    wipeOutputDir true
 }
 
 war {
     dependsOn 'generateSwaggerUI'
-    from("$projectDir/src/generated/resources/swagger-ui")
+    from("$projectDir/src/generated/resources/swagger-ui") {
+        into 'swagger-ui/'
+    }
     setArchivesBaseName 'api'
 }
 
