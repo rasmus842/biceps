@@ -44,6 +44,9 @@ dependencies {
     implementation "org.jdbi:jdbi3-core:$jdbiVersion"
     implementation "org.jdbi:jdbi3-sqlobject:$jdbiVersion"
 
+    testImplementation 'io.github.origin-energy:java-snapshot-testing-junit5:4.+'
+    testImplementation 'io.github.origin-energy:java-snapshot-testing-plugin-jackson:4.+'
+    testImplementation 'org.mockito:mockito-core:5.1.1'
     testImplementation "org.springframework:spring-test:$springVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
@@ -84,6 +87,7 @@ tasks.register('generateOpenApiServer', GenerateTask) {
             // using swaggerUI for documentation
             annotationLibrary: "none", // swagger2
             documentationProvider: "none", // springdoc
+            hideGenerationTimestamp: "true", // false
 
             // Pattern of api (// <default>)
             delegatePattern: "true", // false
